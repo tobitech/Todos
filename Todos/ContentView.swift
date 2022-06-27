@@ -14,31 +14,47 @@ struct Todo: Equatable, Identifiable {
   var isComplete = false
 }
 
+enum TodoAction {
+  case checkboxTapped
+  case textFieldChanged(String)
+}
+
+// In case the todo needs some dependencies to produce some effects
+struct TodoEnvironment {
+}
+
+let todoReducer = Reducer<Todo, TodoAction, TodoEnvironment> { state, action, environment in
+  switch action {
+  case .checkboxTapped:
+    // basically what we do inside these cases is mutate our state and return an effect.
+    state.isComplete.toggle()
+    return .none
+  case .textFieldChanged(let text):
+    state.description = text
+    return .none
+  }
+}
+
 struct AppState: Equatable {
   var todos: [Todo]
 }
 
 
 enum AppAction {
-  case todoCheckboxTapped(index: Int)
-  case todoTextFieldChanged(index: Int, text: String)
+  case todo(index: Int, action: TodoAction)
+  //  case todoCheckboxTapped(index: Int)
+  //  case todoTextFieldChanged(index: Int, text: String)
 }
 
 struct AppEnvironment {
-
+  
 }
 
-let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, environment in
-  switch action {
-  case .todoCheckboxTapped(index: let index):
-    // basically what we do inside these cases is mutate our state and return an effect.
-    state.todos[index].isComplete.toggle()
-    return .none
-  case .todoTextFieldChanged(index: let index, text: let text):
-    state.todos[index].description = text
-    return .none
-  }
-}.debug()
+let appReducer: Reducer<AppState, AppAction, AppEnvironment> = todoReducer.forEach(
+  state: \AppState.todos,
+  action: /AppAction.todo(index:action:),
+  environment: { _ in TodoEnvironment() }
+).debug()
 
 
 struct ContentView: View {
@@ -49,32 +65,43 @@ struct ContentView: View {
     WithViewStore(self.store) { viewStore in
       NavigationView {
         List {
-          // More technically correct way to get index out of the loop
-          // zip(viewStore.todos.indices, viewStore.todos)
-          // Use this zip based approach for production app.
-          // .enumerated() approach works for now because we have a zero based index,
-          ForEach(Array(viewStore.todos.enumerated()), id: \.element.id) { index, todo in
-            HStack {
-              Button(action: {
-                viewStore.send(.todoCheckboxTapped(index: index))
-              }) {
-                Image(systemName: todo.isComplete ? "checkmark.square" : "square")
-              }
-              .buttonStyle(PlainButtonStyle())
-              
-              TextField(
-                "Untitled",
-                text: viewStore.binding(
-                  get: { $0.todos[index].description },
-                  send: { .todoTextFieldChanged(index: index, text: $0) }
-                )
-              )
-            }
-            .foregroundColor(todo.isComplete ? .gray : nil)
-          }
+          ForEachStore(
+            self.store.scope(
+              state: \.todos,
+              action: AppAction.todo(index:action:)
+            ),
+            content: TodoView.init(store:)
+          )
         }
         .navigationTitle("Todos")
       }
+    }
+  }
+}
+
+struct TodoView: View {
+  
+  let store: Store<Todo, TodoAction>
+  
+  var body: some View {
+    WithViewStore(self.store) { viewStore in
+      HStack {
+        Button(action: {
+          viewStore.send(.checkboxTapped)
+        }) {
+          Image(systemName: viewStore.isComplete ? "checkmark.square" : "square")
+        }
+        .buttonStyle(PlainButtonStyle())
+        
+        TextField(
+          "Untitled",
+          text: viewStore.binding(
+            get: \.description,
+            send: TodoAction.textFieldChanged
+          )
+        )
+      }
+      .foregroundColor(viewStore.isComplete ? .gray : nil)
     }
   }
 }
