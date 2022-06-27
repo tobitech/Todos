@@ -41,6 +41,7 @@ struct AppState: Equatable {
 
 
 enum AppAction {
+  case addButtonTapped
   case todo(index: Int, action: TodoAction)
   //  case todoCheckboxTapped(index: Int)
   //  case todoTextFieldChanged(index: Int, text: String)
@@ -50,10 +51,22 @@ struct AppEnvironment {
   
 }
 
-let appReducer: Reducer<AppState, AppAction, AppEnvironment> = todoReducer.forEach(
-  state: \AppState.todos,
-  action: /AppAction.todo(index:action:),
-  environment: { _ in TodoEnvironment() }
+let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
+  todoReducer.forEach(
+    state: \AppState.todos,
+    action: /AppAction.todo(index:action:),
+    environment: { _ in TodoEnvironment() }
+  ),
+  Reducer { state, action, environment in
+    switch action {
+    case .addButtonTapped:
+      state.todos.insert(Todo(id: UUID()), at: 0)
+      return .none
+    case .todo(index: let index, action: let action):
+      // this is where you can layer additional funcationlity onto the app reducer to listen for specific todo actions.
+      return .none
+    }
+  }
 ).debug()
 
 
@@ -74,6 +87,11 @@ struct ContentView: View {
           )
         }
         .navigationTitle("Todos")
+        .navigationBarItems(
+          trailing: Button("Add") {
+            viewStore.send(.addButtonTapped)
+          }
+        )
       }
     }
   }
