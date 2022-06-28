@@ -43,6 +43,7 @@ struct AppState: Equatable {
 enum AppAction: Equatable {
   case addButtonTapped
   case todo(index: Int, action: TodoAction)
+  case todoDelayCompleted
   //  case todoCheckboxTapped(index: Int)
   //  case todoTextFieldChanged(index: Int, text: String)
 }
@@ -65,18 +66,43 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
       
     case .todo(index: _, action: .checkboxTapped):
       // we can do our sorting logic here. Since the appReducer has access to all the todos.
+      
+      // concatenate is from combine: allows us to queue some operations together
+//      return .concatenate(
+//        // cancel any inflight delayed todo completion.
+//        .cancel(id: "completion effect"),
+//
+//        Effect(value: AppAction.todoDelayCompleted)
+//          .delay(for: 1, scheduler: DispatchQueue.main)
+//          .eraseToEffect()
+//          .cancellable(id: "completion effect")
+//      )
+      
+      // Swift feature that allows us define types inline within functions.
+      // this type isn't visible to anyone outside this function, in fact it's only visible to this switch case scope.
+      // use this to prevent typos when using hardcoded string
+      struct CancelDelayID: Hashable {}
+      
+      return Effect(value: AppAction.todoDelayCompleted)
+        .delay(for: 1, scheduler: DispatchQueue.main)
+        .eraseToEffect()
+        .cancellable(id: CancelDelayID(), cancelInFlight: true)
+      
+    case .todo(index: let index, action: let action):
+      // this is where you can layer additional functionality onto the app reducer to listen for specific todo actions.
+      return .none
+      
+    case .todoDelayCompleted:
+      
       // the standard library sort function isn't a stable sort but we can go around that with this implementation to technically achieve a stable sort.
       state.todos = state.todos
         .enumerated()
         .sorted { lhs, rhs in
           (!lhs.element.isComplete && rhs.element.isComplete) || lhs.offset < rhs.offset
         }
-        // .map { $0.element }
+      // .map { $0.element }
         .map(\.element) // Swift 5.2 keypath feature
-      return .none
       
-    case .todo(index: let index, action: let action):
-      // this is where you can layer additional funcationlity onto the app reducer to listen for specific todo actions.
       return .none
     }
   }
