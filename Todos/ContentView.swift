@@ -14,7 +14,7 @@ struct Todo: Equatable, Identifiable {
   var isComplete = false
 }
 
-enum TodoAction {
+enum TodoAction: Equatable {
   case checkboxTapped
   case textFieldChanged(String)
 }
@@ -40,7 +40,7 @@ struct AppState: Equatable {
 }
 
 
-enum AppAction {
+enum AppAction: Equatable {
   case addButtonTapped
   case todo(index: Int, action: TodoAction)
   //  case todoCheckboxTapped(index: Int)
@@ -48,7 +48,7 @@ enum AppAction {
 }
 
 struct AppEnvironment {
-  
+  var uuid: () -> UUID
 }
 
 let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
@@ -60,7 +60,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
   Reducer { state, action, environment in
     switch action {
     case .addButtonTapped:
-      state.todos.insert(Todo(id: UUID()), at: 0)
+      state.todos.insert(Todo(id: environment.uuid()), at: 0)
       return .none
     case .todo(index: let index, action: let action):
       // this is where you can layer additional funcationlity onto the app reducer to listen for specific todo actions.
@@ -148,7 +148,7 @@ struct ContentView_Previews: PreviewProvider {
           ]
         ),
         reducer: appReducer,
-        environment: AppEnvironment()
+        environment: AppEnvironment(uuid: UUID.init)
       )
     )
   }
