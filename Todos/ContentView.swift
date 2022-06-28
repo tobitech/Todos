@@ -62,6 +62,19 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
     case .addButtonTapped:
       state.todos.insert(Todo(id: environment.uuid()), at: 0)
       return .none
+      
+    case .todo(index: _, action: .checkboxTapped):
+      // we can do our sorting logic here. Since the appReducer has access to all the todos.
+      // the standard library sort function isn't a stable sort but we can go around that with this implementation to technically achieve a stable sort.
+      state.todos = state.todos
+        .enumerated()
+        .sorted { lhs, rhs in
+          (!lhs.element.isComplete && rhs.element.isComplete) || lhs.offset < rhs.offset
+        }
+        // .map { $0.element }
+        .map(\.element) // Swift 5.2 keypath feature
+      return .none
+      
     case .todo(index: let index, action: let action):
       // this is where you can layer additional funcationlity onto the app reducer to listen for specific todo actions.
       return .none
