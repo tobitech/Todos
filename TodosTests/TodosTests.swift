@@ -37,7 +37,12 @@ class TodosTests: XCTestCase {
         // we need to describe how the state changes after the action is sent to the store.
         // we make mutation to the state that we expect to happen in a trailing closure.
         $0.todos[0].isComplete = true
-      }
+      },
+      .do {
+        let expectation = self.expectation(description: "wait")
+        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+      },
+      .receive(.todoDelayCompleted)
     )
   }
   
@@ -92,28 +97,16 @@ class TodosTests: XCTestCase {
     store.assert(
       .send(.todo(index: 0, action: .checkboxTapped)) {
         $0.todos[0].isComplete = true
-//        $0.todos = [
-//          $0.todos[1],
-//          $0.todos[0]
-//        ]
-        
-        // this is another version.
-        // But sometimes you should embrace verbosity to that you can clearly determine what went wrong for a failed test.
+      },
+      .do {
+        // do any imperative work that we want to happen
+        // in between steps of our assert.
+        // we will wait 1sec using XCTest expectation API
+        let expectation = self.expectation(description: "wait")
+        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+      },
+      .receive(.todoDelayCompleted) {
         $0.todos.swapAt(0, 1)
-        
-        // long form
-//        $0.todos = [
-//          Todo(
-//            description: "Eggs",
-//            id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
-//            isComplete: false
-//          ),
-//          Todo(
-//            description: "Milk",
-//            id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-//            isComplete: true
-//          )
-//        ]
       }
     )
   }
