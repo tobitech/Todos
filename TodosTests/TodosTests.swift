@@ -11,7 +11,11 @@ import XCTest
 
 class TodosTests: XCTestCase {
   
+  let scheduler = DispatchQueue.testScheduler
+  
   func testCompletingTodo() throws {
+    
+    
     let store = TestStore(
       initialState: AppState(
         todos: [
@@ -24,9 +28,12 @@ class TodosTests: XCTestCase {
       ),
       reducer: appReducer,
       environment: AppEnvironment(
+        mainQueue: scheduler.eraseToAnyScheduler(),
         uuid: { fatalError("unimplemented") } // because we don't expect this test to have this dependency called.
       )
     )
+    
+    // scheduler.advance(by: 1000)
     
     // the assert function allows us to feed a series of system actions
     // to it and see how the system evolves.
@@ -39,8 +46,9 @@ class TodosTests: XCTestCase {
         $0.todos[0].isComplete = true
       },
       .do {
-        let expectation = self.expectation(description: "wait")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+        self.scheduler.advance(by: 1)
+//        let expectation = self.expectation(description: "wait")
+//        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
       },
       .receive(.todoDelayCompleted)
     )
@@ -54,6 +62,7 @@ class TodosTests: XCTestCase {
       ),
       reducer: appReducer,
       environment: AppEnvironment(
+        mainQueue: scheduler.eraseToAnyScheduler(),
         uuid: { UUID(uuidString: "DEADBEEF-DEAD-BEEF-DEAD-DEADBEEFDEAD")! }
       )
     )
@@ -90,6 +99,7 @@ class TodosTests: XCTestCase {
       ),
       reducer: appReducer,
       environment: AppEnvironment(
+        mainQueue: scheduler.eraseToAnyScheduler(),
         uuid: { fatalError("unimplemented") } // because we don't expect this test to have this dependency called.
       )
     )
@@ -99,11 +109,13 @@ class TodosTests: XCTestCase {
         $0.todos[0].isComplete = true
       },
       .do {
+        self.scheduler.advance(by: 1)
+        
         // do any imperative work that we want to happen
         // in between steps of our assert.
         // we will wait 1sec using XCTest expectation API
-        let expectation = self.expectation(description: "wait")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+//        let expectation = self.expectation(description: "wait")
+//        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
       },
       .receive(.todoDelayCompleted) {
         $0.todos.swapAt(0, 1)
@@ -129,6 +141,7 @@ class TodosTests: XCTestCase {
       ),
       reducer: appReducer,
       environment: AppEnvironment(
+        mainQueue: scheduler.eraseToAnyScheduler(),
         uuid: { fatalError("unimplemented") } // because we don't expect this test to have this dependency called.
       )
     )
@@ -138,15 +151,17 @@ class TodosTests: XCTestCase {
         $0.todos[0].isComplete = true
       },
       .do {
-        let expectation = self.expectation(description: "wait")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 0.5)
+        self.scheduler.advance(by: 0.5)
+//        let expectation = self.expectation(description: "wait")
+//        _ = XCTWaiter.wait(for: [expectation], timeout: 0.5)
       },
       .send(.todo(index: 0, action: .checkboxTapped)) {
         $0.todos[0].isComplete = false
       },
       .do {
-        let expectation = self.expectation(description: "wait")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+        self.scheduler.advance(by: 1)
+//        let expectation = self.expectation(description: "wait")
+//        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
       },
       .receive(.todoDelayCompleted)
     )
