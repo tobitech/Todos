@@ -35,6 +35,7 @@ struct TodosApp: App {
           ),
           reducer: appReducer, // .debug(),
           environment: AppEnvironment(
+            mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
             uuid: UUID.init
           )
         )

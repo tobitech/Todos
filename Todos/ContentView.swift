@@ -5,6 +5,7 @@
 //  Created by Oluwatobi Omotayo on 27/06/2022.
 //
 
+import Combine
 import ComposableArchitecture
 import SwiftUI
 
@@ -49,8 +50,26 @@ enum AppAction: Equatable {
 }
 
 struct AppEnvironment {
+  // typealias for the below verbose code.
+  var mainQueue: AnySchedulerOf<DispatchQueue>
+  
+  // this is verbose
+//  var mainQueue: AnyScheduler<DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+  
+  // we will be able to do this when Swift supports existential types.
+//  var mainQueue: Scheduler where .SchedulerTimeType == DispatchQueue.SchedulerTimeType, .SchedulerOptions == DispatchQueue.SchedulerOptions
   var uuid: () -> UUID
 }
+
+// We expected that Swift has `AnyScheduler` a type erasure for the Scheduler protocol with an associated type just like these. but it doesn't
+// that's why it was included in the composable architecture.
+// AnyCancellable
+// AnyPublisher
+// AnyView
+// AnyHashable
+// AnyCollection
+// AnyIterator
+// AnySubscriber
 
 let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
   todoReducer.forEach(
@@ -84,10 +103,11 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
       struct CancelDelayID: Hashable {}
       
       return Effect(value: AppAction.todoDelayCompleted)
+        .debounce(id: CancelDelayID(), for: 1, scheduler: environment.mainQueue)
 //        .debounce(id: CancelDelayID(), for: 1, scheduler: DispatchQueue.main)
-        .delay(for: 1, scheduler: DispatchQueue.main)
-        .eraseToEffect()
-        .cancellable(id: CancelDelayID(), cancelInFlight: true)
+//        .delay(for: 1, scheduler: DispatchQueue.main)
+//        .eraseToEffect()
+//        .cancellable(id: CancelDelayID(), cancelInFlight: true)
       
     case .todo(index: let index, action: let action):
       // this is where you can layer additional functionality onto the app reducer to listen for specific todo actions.
@@ -188,7 +208,10 @@ struct ContentView_Previews: PreviewProvider {
           ]
         ),
         reducer: appReducer,
-        environment: AppEnvironment(uuid: UUID.init)
+        environment: AppEnvironment(
+          mainQueue: DispatchQueue.main.eraseToAnyScheduler(),
+          uuid: UUID.init
+        )
       )
     )
   }
