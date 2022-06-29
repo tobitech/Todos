@@ -33,6 +33,7 @@
 		208096212869ADB900DD9CC5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		208096232869ADBD00DD9CC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		208096262869ADBD00DD9CC5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		20EE5D8E286C5D6E0017948D /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +66,7 @@
 		208096132869ADB900DD9CC5 = {
 			isa = PBXGroup;
 			children = (
+				20EE5D8E286C5D6E0017948D /* Playground.playground */,
 				2080961E2869ADB900DD9CC5 /* Todos */,
 				20581880286AF4D6003D46E4 /* TodosTests */,
 				2080961D2869ADB900DD9CC5 /* Products */,
