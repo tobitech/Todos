@@ -84,6 +84,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment>.combine(
       struct CancelDelayID: Hashable {}
       
       return Effect(value: AppAction.todoDelayCompleted)
+//        .debounce(id: CancelDelayID(), for: 1, scheduler: DispatchQueue.main)
         .delay(for: 1, scheduler: DispatchQueue.main)
         .eraseToEffect()
         .cancellable(id: CancelDelayID(), cancelInFlight: true)

@@ -110,4 +110,45 @@ class TodosTests: XCTestCase {
       }
     )
   }
+  
+  func testTodoSorting_Cancellation() throws {
+    let store = TestStore(
+      initialState: AppState(
+        todos: [
+          Todo(
+            description: "Milk",
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+            isComplete: false
+          ),
+          Todo(
+            description: "Eggs",
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+            isComplete: false
+          )
+        ]
+      ),
+      reducer: appReducer,
+      environment: AppEnvironment(
+        uuid: { fatalError("unimplemented") } // because we don't expect this test to have this dependency called.
+      )
+    )
+    
+    store.assert(
+      .send(.todo(index: 0, action: .checkboxTapped)) {
+        $0.todos[0].isComplete = true
+      },
+      .do {
+        let expectation = self.expectation(description: "wait")
+        _ = XCTWaiter.wait(for: [expectation], timeout: 0.5)
+      },
+      .send(.todo(index: 0, action: .checkboxTapped)) {
+        $0.todos[0].isComplete = false
+      },
+      .do {
+        let expectation = self.expectation(description: "wait")
+        _ = XCTWaiter.wait(for: [expectation], timeout: 1)
+      },
+      .receive(.todoDelayCompleted)
+    )
+  }
 }
