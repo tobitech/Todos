@@ -11,11 +11,9 @@ import XCTest
 
 class TodosTests: XCTestCase {
   
-  let scheduler = DispatchQueue.testScheduler
+  let scheduler = DispatchQueue.test
   
   func testCompletingTodo() throws {
-    
-    
     let store = TestStore(
       initialState: AppState(
         todos: [

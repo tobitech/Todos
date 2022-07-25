@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		20581882286AF4D6003D46E4 /* TodosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20581881286AF4D6003D46E4 /* TodosTests.swift */; };
+		2075182D288EA56000F3B048 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2075182C288EA56000F3B048 /* Todo.swift */; };
 		208096202869ADB900DD9CC5 /* TodosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2080961F2869ADB900DD9CC5 /* TodosApp.swift */; };
-		208096222869ADB900DD9CC5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208096212869ADB900DD9CC5 /* ContentView.swift */; };
+		208096222869ADB900DD9CC5 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208096212869ADB900DD9CC5 /* AppView.swift */; };
 		208096242869ADBD00DD9CC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208096232869ADBD00DD9CC5 /* Assets.xcassets */; };
 		208096272869ADBD00DD9CC5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 208096262869ADBD00DD9CC5 /* Preview Assets.xcassets */; };
 		2080962F2869B12500DD9CC5 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 2080962E2869B12500DD9CC5 /* ComposableArchitecture */; };
+		20ACF8BF287CCD04006BFD0F /* TodoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ACF8BE287CCD04006BFD0F /* TodoDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,11 +30,13 @@
 /* Begin PBXFileReference section */
 		2058187F286AF4D6003D46E4 /* TodosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20581881286AF4D6003D46E4 /* TodosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosTests.swift; sourceTree = "<group>"; };
+		2075182C288EA56000F3B048 /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
 		2080961C2869ADB900DD9CC5 /* Todos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2080961F2869ADB900DD9CC5 /* TodosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosApp.swift; sourceTree = "<group>"; };
-		208096212869ADB900DD9CC5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		208096212869ADB900DD9CC5 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		208096232869ADBD00DD9CC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		208096262869ADBD00DD9CC5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		20ACF8BE287CCD04006BFD0F /* TodoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsView.swift; sourceTree = "<group>"; };
 		20EE5D8E286C5D6E0017948D /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
@@ -86,7 +90,9 @@
 			isa = PBXGroup;
 			children = (
 				2080961F2869ADB900DD9CC5 /* TodosApp.swift */,
-				208096212869ADB900DD9CC5 /* ContentView.swift */,
+				208096212869ADB900DD9CC5 /* AppView.swift */,
+				2075182C288EA56000F3B048 /* Todo.swift */,
+				20ACF8BE287CCD04006BFD0F /* TodoDetailsView.swift */,
 				208096232869ADBD00DD9CC5 /* Assets.xcassets */,
 				208096252869ADBD00DD9CC5 /* Preview Content */,
 			);
@@ -215,8 +221,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208096222869ADB900DD9CC5 /* ContentView.swift in Sources */,
+				208096222869ADB900DD9CC5 /* AppView.swift in Sources */,
+				20ACF8BF287CCD04006BFD0F /* TodoDetailsView.swift in Sources */,
 				208096202869ADB900DD9CC5 /* TodosApp.swift in Sources */,
+				2075182D288EA56000F3B048 /* Todo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
